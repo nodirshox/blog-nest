@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   UsePipes,
@@ -11,44 +12,39 @@ import {
 } from '@nestjs/common';
 import { CreatePostDto } from '../../dtos/CreatePost.dto';
 import { UpdatePostDto } from '../../dtos/UpdatePost.dto';
+import { PostsService } from '../../services/posts/posts.service';
 
 @Controller('posts')
 export class PostsController {
+  constructor(private postsService: PostsService) {}
+
   @Get()
   getPosts() {
-    return [
-      { id: '1', title: 'Getting started with NestJS', body: 'Lorem ipsum...' },
-      { id: '2', title: 'Microservices for kids', body: 'Lorem ipsum...' },
-    ];
+    return this.postsService.getPosts();
   }
 
   @Get(':id')
-  getPostById(@Param('id') id: string) {
-    console.log(id);
-    return {
-      id: '1',
-      title: 'Getting started with NestJS',
-      body: 'Lorem ipsum...',
-    };
+  getPostById(@Param('id', ParseIntPipe) id: number) {
+    return this.postsService.getPostById(id);
   }
 
   @Post()
   @UsePipes(new ValidationPipe())
   createPost(@Body() newPost: CreatePostDto) {
-    console.log(newPost);
-    return;
+    return this.postsService.createPost(newPost);
   }
 
   @Put('/:id')
   @UsePipes(new ValidationPipe())
-  updatePostById(@Body() updatePost: UpdatePostDto, @Param('id') id: string) {
-    console.log(id, updatePost);
-    return;
+  updatePostById(
+    @Body() updatePost: UpdatePostDto,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.postsService.updatePostById(updatePost, id);
   }
 
   @Delete(':id')
-  deletePostById(@Param('id') id: string) {
-    console.log(id);
-    return;
+  deletePostById(@Param('id', ParseIntPipe) id: number) {
+    return this.postsService.deletePostById(id);
   }
 }
