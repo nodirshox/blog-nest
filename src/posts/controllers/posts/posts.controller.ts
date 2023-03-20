@@ -36,15 +36,15 @@ export class PostsController {
 
   @Put('/:id')
   @UsePipes(new ValidationPipe())
-  updatePostById(
+  async updatePostById(
     @Body() updatePost: UpdatePostDto,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.postsService.updatePostById(updatePost, id);
+    await this.postsService.updatePostById(id, updatePost);
   }
 
   @Delete(':id')
-  deletePostById(@Param('id', ParseIntPipe) id: number) {
-    return this.postsService.deletePostById(id);
+  async deletePostById(@Param('id', ParseIntPipe) id: number) {
+    await this.postsService.deletePostById(id);
   }
 }
