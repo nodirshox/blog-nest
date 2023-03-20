@@ -1,39 +1,54 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePostDto } from '../../dtos/CreatePost.dto';
-import { UpdatePostDto } from '../../dtos/UpdatePost.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Post } from '../../../typeorm/entities/Post';
+import { Repository } from 'typeorm';
+import { CreatePostParams, UpdatePostByIdParams } from '../../../utils/types';
 
 @Injectable()
 export class PostsService {
-  private mockPosts = [
-    { id: '1', title: 'Getting started with NestJS.', body: 'Lorem ipsum...' },
-    { id: '2', title: 'Microservices for kids', body: 'Lorem ipsum...' },
-  ];
+  constructor(
+    @InjectRepository(Post) private postRepository: Repository<Post>,
+  ) {}
 
   getPosts() {
-    return this.mockPosts;
+    return this.postRepository.find();
   }
 
-  createPost(newPost: CreatePostDto) {
-    // business logic
-    console.log(newPost);
-    return;
+  createPost(postDetails: CreatePostParams) {
+    const newPost = this.postRepository.create({
+      ...postDetails,
+      createdAt: new Date(),
+    });
+    return this.postRepository.save(newPost);
   }
 
-  updatePostById(updatePost: UpdatePostDto, id: number) {
-    // business logic
-    console.log(updatePost, id);
-    return;
+  async updatePostById(id: number, updatePostDetails: UpdatePostByIdParams) {
+    const post = await this.postRepository.findOneBy({ id });
+
+    if (!post) {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+    }
+
+    return this.postRepository.update({ id }, { ...updatePostDetails });
   }
 
-  getPostById(id: number) {
-    // business logic
-    console.log(id);
-    return this.mockPosts[0];
+  async getPostById(id: number) {
+    const post = await this.postRepository.findOneBy({ id });
+
+    if (!post) {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+    }
+
+    return post;
   }
 
-  deletePostById(id: number) {
-    // business logic
-    console.log(id);
-    return;
+  async deletePostById(id: number) {
+    const post = await this.postRepository.findOneBy({ id });
+
+    if (!post) {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+    }
+
+    return this.postRepository.delete({ id });
   }
 }
