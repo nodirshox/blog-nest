@@ -1,3 +1,3 @@
-# Blog API using NestJS
+# Todo API using NestJS
 
 NestJS + TypeORM + Mysql

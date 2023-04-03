@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { PostsModule } from './modules/posts/posts.module';
+import { TodosModule } from './modules/todos/todos.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Post } from './entity/Post';
+import { Todo } from './entity/Todo';
 
 @Module({
   imports: [
@@ -12,10 +12,10 @@ import { Post } from './entity/Post';
       username: 'root',
       password: 'password',
       database: 'mysql_db',
-      entities: [Post],
+      entities: [Todo],
       synchronize: true,
     }),
-    PostsModule,
+    TodosModule,
   ],
   controllers: [],
   providers: [],
