@@ -12,12 +12,15 @@ import { CreateTodoDto } from './dto/CreateTodo.dto';
 import { UpdateTodoDto } from './dto/UpdateTodo.dto';
 import { TodosService } from './todos.service';
 import { Todo } from '../../entity/Todo';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @Controller('todos')
+@ApiTags('todos')
 export class TodosController {
-  constructor(private todoService: TodosService) {}
+  constructor(private readonly todoService: TodosService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create a todo' })
   createPost(@Body() newTodo: CreateTodoDto): Promise<Todo> {
     return this.todoService.createTodo(newTodo);
   }
